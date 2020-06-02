@@ -1,11 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/app_bar_main">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ngallazzi.highlightingview.HighlightingView
+            android:id="@+id/light1"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            custom:animationDurationInMillis="500"
+            custom:bottomTextColor="@color/errorColor"
+            custom:highlightedBackgroundColor="#4CAF50"
+            custom:highlightedBottomText="Download completed"
+            custom:highlightedIcon="@drawable/ic_baseline_done_24"
+            custom:idleBackgroundColor="#ffffff"
+            custom:idleIcon="@drawable/ic_baseline_power_off_24"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/myEnlightingLayout"
+            custom:middleText="Light 1"
+            custom:middleTextColor="@color/errorColor" />
+
+        <com.ngallazzi.highlightingview.HighlightingView
+            android:id="@+id/light2"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_weight="1"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            custom:animationDurationInMillis="500"
+            custom:bottomTextColor="@color/errorColor"
+            custom:highlightedBackgroundColor="#4CAF50"
+            custom:highlightedIcon="@drawable/ic_baseline_done_24"
+            custom:idleBackgroundColor="#ffffff"
+            custom:idleIcon="@drawable/ic_baseline_power_off_24"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/myEnlightingLayout"
+            custom:middleText="Light 2"
+            custom:middleTextColor="@color/errorColor" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.ngallazzi.highlightingview.HighlightingView
+            android:id="@+id/fan"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            custom:animationDurationInMillis="500"
+            custom:bottomTextColor="@color/errorColor"
+            custom:highlightedBackgroundColor="#4CAF50"
+            custom:highlightedBottomText="Download completed"
+            custom:highlightedIcon="@drawable/ic_baseline_done_24"
+            custom:idleBackgroundColor="#ffffff"
+            custom:idleIcon="@drawable/ic_baseline_power_off_24"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/myEnlightingLayout"
+            custom:middleText="Fan"
+            custom:middleTextColor="@color/errorColor" />
+
+        <com.ngallazzi.highlightingview.HighlightingView
+            android:id="@+id/allon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_margin="20dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            custom:animationDurationInMillis="500"
+            custom:bottomTextColor="@color/errorColor"
+            custom:highlightedBackgroundColor="#4CAF50"
+            android:layout_weight="1"
+            custom:highlightedIcon="@drawable/ic_baseline_done_24"
+            custom:idleBackgroundColor="#ffffff"
+            custom:idleIcon="@drawable/ic_baseline_power_off_24"
+            custom:layout_constraintStart_toStartOf="parent"
+            custom:layout_constraintTop_toBottomOf="@+id/myEnlightingLayout"
+            custom:middleText="All On"
+            custom:middleTextColor="@color/errorColor" />
+
+    </LinearLayout>
+
  
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

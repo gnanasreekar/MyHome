@@ -1,27 +1,27 @@
 package com.rgs.myhome;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,23 +29,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ngallazzi.highlightingview.HighlightingView;
-import com.rgs.myhome.Auth.Login;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.view.GravityCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import java.util.Set;
-
-import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -53,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     SharedPreferences sharedPreferences;
     DatabaseReference databaseReference;
     String TAG = "LMain";
-    private TextView deviceIp;
+  //  private TextView deviceIp;
     private HighlightingView light1;
     private HighlightingView light2;
     String L1 = "", L2 = "", F = "";
@@ -73,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
          databaseReference = FirebaseDatabase.getInstance().getReference(sharedPreferences.getString("uid", "..."));
 
         {
-            deviceIp = findViewById(R.id.device_ip);
+           // deviceIp = findViewById(R.id.device_ip);
             light1 = findViewById(R.id.light1);
             light2 = findViewById(R.id.light2);
             fan = findViewById(R.id.fan);
@@ -227,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                   initial();
                 } else {
                     Log.d(TAG, "getdata: " + dataSnapshot.child("L1").getValue().toString()                                                                                                                                                   );
-                    ((TextView) findViewById(R.id.device_ip)).setText(dataSnapshot.child("IP").getValue().toString());
+                 //   ((TextView) findViewById(R.id.device_ip)).setText(dataSnapshot.child("IP").getValue().toString());
 
                     if (dataSnapshot.child("L1").getValue().toString().equals("1")){
 
@@ -316,10 +299,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_signout) {
-            firebaseAuth.signOut();
-            startActivity(new Intent(MainActivity.this, Login.class));
-        }
+//        if (id == R.id.nav_signout) {
+//            firebaseAuth.signOut();
+//            startActivity(new Intent(MainActivity.this, Login.class));
+//        }
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return false;
