@@ -1,7 +1,12 @@
 package com.rgs.myhome;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +20,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -34,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     NavigationView navView;
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     DatabaseReference databaseReference;
     String TAG = "LMain";
   //  private TextView deviceIp;
@@ -53,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         firebaseAuth = FirebaseAuth.getInstance();
         sharedPreferences = getApplicationContext().getSharedPreferences("sp", 0);
+        editor = sharedPreferences.edit();
          databaseReference = FirebaseDatabase.getInstance().getReference(sharedPreferences.getString("uid", "..."));
 
         {
@@ -95,11 +104,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (light1.isHighlighted()){
                     light1.setHighlighted(false); light1.setBottomText("Off");
                     databaseReference.child("L1").setValue(0);
+                    editor.putInt("L1", 0);
                 } else {
-
                     light1.setHighlighted(true); light1.setBottomText("On");
                     databaseReference.child("L1").setValue(1);
+                    editor.putInt("L1", 1);
                 }
+                editor.apply();
 
             }
         });
@@ -170,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navviewdata();
 
-
+createNotificationChannels();
 
     }
 
@@ -200,6 +211,76 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setTitle("Hey, " + user_name);
     }
 
+    private void createNotificationChannels() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create channel to show notifications.
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(new NotificationChannel("default", "Switch", NotificationManager.IMPORTANCE_DEFAULT));
+        }
+
+
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
+        NotificationCompat.Action action1,action2,action3;
+        {
+            Intent intent = new Intent(this, SwitchService.class);
+            intent.setAction(SwitchService.ACTION1);
+            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            action1 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L1", pendingIntent).build();
+        }
+
+        {
+            Intent intent = new Intent(this, SwitchService.class);
+            intent.setAction(SwitchService.ACTION2);
+            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            action2 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L2", pendingIntent).build();
+        }
+
+        {
+            Intent intent = new Intent(this, SwitchService.class);
+            intent.setAction(SwitchService.ACTION3);
+            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            action3 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "F", pendingIntent).build();
+        }
+
+
+
+
+
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("title");
+        builder.setContentText("Marked ");
+        builder.setOngoing(true);
+        builder.addAction(action1);
+        builder.addAction(action2);
+        builder.addAction(action3);
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+        notificationManagerCompat.notify(1000, builder.build());
+
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            CharSequence charSequence = "Notification";
+//            String notidisc = "Noti disc";
+//            String CHANNEL_ID = "simple notification";
+//            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, charSequence, NotificationManager.IMPORTANCE_DEFAULT);
+//            notificationChannel.setDescription(notidisc);
+//
+//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            notificationManager.createNotificationChannel(notificationChannel);
+//            // The id of the group.
+//            String groupId = "my_group_01";
+//            // The user-visible name of the group.
+//            CharSequence groupName = "Hello";
+//            NotificationManager mnotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//            mnotificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupId, notidisc));
+//
+//        }
+
+
+    }
+
 
     public void getdata(){
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -216,8 +297,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         light1.setHighlighted(true);
                         light1.setBottomText("On");
+                        editor.putInt("L1" , 1);
 
                     } else if (dataSnapshot.child("L1").getValue().toString().equals("0")){
+
+                        editor.putInt("L1" , 0);
 
                         if (light1.isHighlighted()){
                             light1.performClick();
@@ -228,10 +312,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     if (dataSnapshot.child("L2").getValue().toString().equals("1")){
 
+                        editor.putInt("L2" , 1);
+
                         light2.setHighlighted(true);
                         light2.setBottomText("On");
 
                     } else if (dataSnapshot.child("L2").getValue().toString().equals("0")){
+
+                        editor.putInt("L2" , 0);
 
                         if (light2.isHighlighted()){
                             light2.performClick();
@@ -242,10 +330,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     if (dataSnapshot.child("F").getValue().toString().equals("1")){
 
+                        editor.putInt("F" , 1);
+
                         fan.setHighlighted(true);
                         fan.setBottomText("On");
 
                     } else if (dataSnapshot.child("F").getValue().toString().equals("0")){
+
+                        editor.putInt("F" , 0);
 
                         if (fan.isHighlighted()){
                             fan.performClick();

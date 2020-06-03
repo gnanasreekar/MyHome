@@ -9,8 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Auth.SignUp"></activity>
-        <activity android:name=".Auth.Login" >
+        <service
+            android:name=".SwitchService"
+            android:exported="false"></service>
+
+        <activity android:name=".Auth.SignUp" />
+        <activity android:name=".Auth.Login">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,9 +24,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
