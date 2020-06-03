@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        startService(new Intent(this, NotificationSwitch.class));
 
         firebaseAuth = FirebaseAuth.getInstance();
         sharedPreferences = getApplicationContext().getSharedPreferences("sp", 0);
@@ -93,95 +94,92 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             user_email = sharedPreferences.getString("email", "..");
         }
 
-
-
-
-
         getdata();
-        light1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (light1.isHighlighted()){
-                    light1.setHighlighted(false); light1.setBottomText("Off");
-                    databaseReference.child("L1").setValue(0);
-                    editor.putInt("L1", 0);
-                } else {
-                    light1.setHighlighted(true); light1.setBottomText("On");
-                    databaseReference.child("L1").setValue(1);
-                    editor.putInt("L1", 1);
+        navviewdata();
+        createNotificationChannels();
+
+        {
+            light1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (light1.isHighlighted()){
+                        light1.setHighlighted(false); light1.setBottomText("Off");
+                        databaseReference.child("L1").setValue(0);
+                        editor.putInt("L1", 0);
+                    } else {
+                        light1.setHighlighted(true); light1.setBottomText("On");
+                        databaseReference.child("L1").setValue(1);
+                        editor.putInt("L1", 1);
+                    }
+                    editor.apply();
+
                 }
-                editor.apply();
+            });
 
-            }
-        });
+            light2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (light2.isHighlighted()){
+                        light2.setHighlighted(false); light2.setBottomText("Off");
+                        databaseReference.child("L2").setValue(0);
+                    } else {
 
-        light2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (light2.isHighlighted()){
-                    light2.setHighlighted(false); light2.setBottomText("Off");
-                    databaseReference.child("L2").setValue(0);
-                } else {
+                        light2.setHighlighted(true); light2.setBottomText("On");
+                        databaseReference.child("L2").setValue(1);
+                    }
 
-                    light2.setHighlighted(true); light2.setBottomText("On");
-                    databaseReference.child("L2").setValue(1);
                 }
+            });
 
-            }
-        });
+            fan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (fan.isHighlighted()){
+                        fan.setHighlighted(false); fan.setBottomText("Off");
+                        databaseReference.child("F").setValue(0);
+                    } else {
 
-        fan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (fan.isHighlighted()){
-                    fan.setHighlighted(false); fan.setBottomText("Off");
-                    databaseReference.child("F").setValue(0);
-                } else {
+                        fan.setHighlighted(true); fan.setBottomText("On");
+                        databaseReference.child("F").setValue(1);
+                    }
 
-                    fan.setHighlighted(true); fan.setBottomText("On");
-                    databaseReference.child("F").setValue(1);
                 }
+            });
 
-            }
-        });
+            // TODO: 02-06-2020 tey 1-1-1-1 format
 
-        // TODO: 02-06-2020 tey 1-1-1-1 format
-
-        allon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (allon.isHighlighted()){
-                    allon.setHighlighted(false); allon.setBottomText("All Off");
-                    databaseReference.child("F").setValue(0);
-                    databaseReference.child("L1").setValue(0);
-                    databaseReference.child("L2").setValue(0);
-                    getdata();
+            allon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (allon.isHighlighted()){
+                        allon.setHighlighted(false); allon.setBottomText("All Off");
+                        databaseReference.child("F").setValue(0);
+                        databaseReference.child("L1").setValue(0);
+                        databaseReference.child("L2").setValue(0);
+                        getdata();
 //
 //                    fan.setHighlighted(false); fan.setBottomText("Off");
 //                    light2.setHighlighted(false); light2.setBottomText("Off");
 //                    light1.setHighlighted(false); light1.setBottomText("Off");
 
-                } else {
+                    } else {
 
-                    allon.setHighlighted(true); allon.setBottomText("All On");
+                        allon.setHighlighted(true); allon.setBottomText("All On");
 
 //                    fan.setHighlighted(true); fan.setBottomText("On");
 //                    light2.setHighlighted(true); light2.setBottomText("On");
 //                    light1.setHighlighted(true); light1.setBottomText("On");
 
-                    databaseReference.child("F").setValue(1);
-                    databaseReference.child("L1").setValue(1);
-                    databaseReference.child("L2").setValue(1);
+                        databaseReference.child("F").setValue(1);
+                        databaseReference.child("L1").setValue(1);
+                        databaseReference.child("L2").setValue(1);
 
-                    getdata();
+                        getdata();
+                    }
+
                 }
-
-            }
-        });
-
-        navviewdata();
-
-createNotificationChannels();
+            });
+        }
 
     }
 
@@ -220,63 +218,45 @@ createNotificationChannels();
 
 
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
-        NotificationCompat.Action action1,action2,action3;
-        {
-            Intent intent = new Intent(this, SwitchService.class);
-            intent.setAction(SwitchService.ACTION1);
-            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
-            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            action1 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L1", pendingIntent).build();
-        }
-
-        {
-            Intent intent = new Intent(this, SwitchService.class);
-            intent.setAction(SwitchService.ACTION2);
-            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
-            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            action2 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L2", pendingIntent).build();
-        }
-
-        {
-            Intent intent = new Intent(this, SwitchService.class);
-            intent.setAction(SwitchService.ACTION3);
-            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
-            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            action3 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "F", pendingIntent).build();
-        }
-
-
-
-
-
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle("title");
-        builder.setContentText("Marked ");
-        builder.setOngoing(true);
-        builder.addAction(action1);
-        builder.addAction(action2);
-        builder.addAction(action3);
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-        notificationManagerCompat.notify(1000, builder.build());
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            CharSequence charSequence = "Notification";
-//            String notidisc = "Noti disc";
-//            String CHANNEL_ID = "simple notification";
-//            NotificationChannel notificationChannel = new NotificationChannel(CHANNEL_ID, charSequence, NotificationManager.IMPORTANCE_DEFAULT);
-//            notificationChannel.setDescription(notidisc);
-//
-//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//            notificationManager.createNotificationChannel(notificationChannel);
-//            // The id of the group.
-//            String groupId = "my_group_01";
-//            // The user-visible name of the group.
-//            CharSequence groupName = "Hello";
-//            NotificationManager mnotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//            mnotificationManager.createNotificationChannelGroup(new NotificationChannelGroup(groupId, notidisc));
-//
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "default");
+//        NotificationCompat.Action action1,action2,action3;
+//        {
+//            Intent intent = new Intent(this, SwitchService.class);
+//            intent.setAction(SwitchService.ACTION1);
+//            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+//            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            action1 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L1", pendingIntent).build();
 //        }
+//
+//        {
+//            Intent intent = new Intent(this, SwitchService.class);
+//            intent.setAction(SwitchService.ACTION2);
+//            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+//            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            action2 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "L2", pendingIntent).build();
+//        }
+//
+//        {
+//            Intent intent = new Intent(this, SwitchService.class);
+//            intent.setAction(SwitchService.ACTION3);
+//            intent.putExtra("uid",sharedPreferences.getString("uid", "..."));
+//            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//            action3 = new NotificationCompat.Action.Builder(R.mipmap.ic_launcher, "F", pendingIntent).build();
+//        }
+//
+//
+//
+//
+//
+//        builder.setSmallIcon(R.mipmap.ic_launcher);
+//        builder.setContentTitle("Home");
+//        builder.setOngoing(true);
+//        builder.addAction(action1);
+//        builder.addAction(action2);
+//        builder.addAction(action3);
+//        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+//        notificationManagerCompat.notify(1000, builder.build());
+
 
 
     }
